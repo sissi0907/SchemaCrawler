@@ -1,0 +1,30 @@
+name: Test Flaky
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ’11’
+
+      - name: Compile the project
+        run: mvn test-compile -pl schemacrawler-utility -am -Drat.skip
+  
+      - name: Run tests
+        run: mvn -pl schemacrawler-utility test -Dtest=us.fatehi.utility.test.html.AnchorTest#anchor2
+        
+      # - name: Set up JDK 8 for NonDex
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'adopt'
+      #     java-version: '8'
+  
+      - name: Run NonDex to check for flaky tests
+        run: mvn -pl schemacrawler-utility edu.illinois:nondex-maven-plugin:2.1.7:nondex -Dtest=us.fatehi.utility.test.html.AnchorTest#anchor2 -DnondexRuns=20
