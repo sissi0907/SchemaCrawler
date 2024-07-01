@@ -13,6 +13,8 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+      - name: Check version
+        run: git checkout 18d6c5fb79c8e27cdeafc317ee63b27837aa6fec
 
       - name: Compile the project
         run: mvn test-compile -pl schemacrawler-utility -am -Drat.skip
